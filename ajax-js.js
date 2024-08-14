@@ -17,8 +17,9 @@ export function onDocumentReady() {
         event.preventDefault();
         console.log("Form submit intercepted. Performing accessibility checks...");
 
-        // Perform accessibility checks before proceeding
-        if (!performAccessibilityChecks()) {
+        // Check for required errors before proceeding
+        const hasRequiredErrors = !performAccessibilityChecks(); // Call the function from access-new.js
+        if (hasRequiredErrors) {
             console.error("Accessibility checks failed. Form submission halted.");
             return;
         }
