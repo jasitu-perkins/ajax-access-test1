@@ -30,8 +30,7 @@ export function onDocumentReady() {
         try {
             const response = await fetch(submissionUrl, {
                 method: 'POST',
-                body: formData,
-                credentials: 'include'
+                body: formData
             });
 
             if (!response.ok) {
