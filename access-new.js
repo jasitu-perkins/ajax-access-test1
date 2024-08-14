@@ -1,4 +1,4 @@
-export function performAccessibilityChecks() {
+function performAccessibilityChecks() {
     // Select all required form lines
     const elements = document.querySelectorAll(".jotform-form .form-line.jf-required");
     let hasFormLineError = false;
@@ -109,21 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log("Error message does not require an update.");
                 }
             }
-        }
-    }
-
-    // Handle form line errors
-    function handleFormLineError(target) {
-        hasFormLineError = true;
-        const errorMessage = target.querySelector(".form-error-message");
-        if (errorMessage) {
-            errorMessage.style.display = 'none';
-            console.log("Hiding error message due to form submission.");
-        }
-        const validationError = target.querySelector(".form-validation-error");
-        if (validationError) {
-            validationError.classList.remove("form-validation-error");
-            console.log("Removing form validation error class.");
         }
     }
 

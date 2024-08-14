@@ -1,23 +1,29 @@
 // Ensure performAccessibilityChecks is defined in the global scope
-// If it's in access-new.js, make sure to include that script in your HTML before this one
-
 function performAccessibilityChecks() {
-    // Select all required form lines
     const elements = document.querySelectorAll(".jotform-form .form-line.jf-required");
     let hasFormLineError = false;
 
-    // Check if any form line has an error
     elements.forEach(element => {
         if (element.classList.contains('form-line-error')) {
             hasFormLineError = true;
         }
     });
 
-    // Return true if no form line errors are found
     return !hasFormLineError;
 }
 
-export function onDocumentReady() {
+// Function to replace * with (Required)
+function replaceRequiredText() {
+    const requiredSpans = document.querySelectorAll(".jotform-form .form-line.jf-required .form-required");
+    requiredSpans.forEach(span => {
+        if (span.textContent.trim() === "*") {
+            span.textContent = "(Required)";
+            span.setAttribute('aria-hidden', 'true');
+        }
+    });
+}
+
+function onDocumentReady() {
     console.log("Document is ready. Initializing form handlers...");
     const forms = document.querySelectorAll('.jotform-form');
 
@@ -34,8 +40,7 @@ export function onDocumentReady() {
         event.preventDefault();
         console.log("Form submit intercepted. Performing accessibility checks...");
 
-        // Check for required errors before proceeding
-        const hasRequiredErrors = !performAccessibilityChecks(); // Call the function from access-new.js
+        const hasRequiredErrors = !performAccessibilityChecks();
         if (hasRequiredErrors) {
             console.error("Accessibility checks failed. Form submission halted.");
             return;
@@ -46,7 +51,7 @@ export function onDocumentReady() {
         const submissionUrl = form.action;
 
         console.log("Submission URL:", submissionUrl);
-        console.log("Form Data:", Array.from(formData.entries())); // Log form data entries
+        console.log("Form Data:", Array.from(formData.entries()));
 
         try {
             const response = await fetch(submissionUrl, {
@@ -60,7 +65,7 @@ export function onDocumentReady() {
             }
 
             const html = await response.text();
-            console.log("Response HTML:", html); // Log the response HTML
+            console.log("Response HTML:", html);
             parseHtmlAndReplaceForm(html, form);
         } catch (error) {
             console.error("Error during fetch:", error.message);
@@ -86,17 +91,9 @@ export function onDocumentReady() {
         form.parentNode.replaceChild(divElement, form);
     }
 
-    function addCssFromInlineString(css) {
-        const head = document.getElementsByTagName('head')[0];
-        const s = document.createElement('style');
-        s.setAttribute('type', 'text/css');
-        if (s.styleSheet) {
-            s.styleSheet.cssText = css;
-        } else {
-            s.appendChild(document.createTextNode(css));
-        }
-        head.appendChild(s);
-    }
+    // Call the function to replace required text
+    replaceRequiredText();
 }
 
+// Initialize the document ready function
 document.addEventListener('DOMContentLoaded', onDocumentReady);
